@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: match
+  webflux:
+    base-path: /match
+  data:
+    mongodb:
+      host: mongo-match
+      port: 27017
+      username: root
+      password: orca0000
+      database: admin
+      authentication-database: admin
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: match
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.orca.*"
+    listener:
+      ack-mode: manual_immediate
+
+server:
+  port: 8040
+
+external:
+  services:
+    auth:
+      host: orca-auth
+      port: 8010
+    player:
+      host: orca-player
+      port: 8020
+    club:
+      host: orca-club
+      port: 8030
