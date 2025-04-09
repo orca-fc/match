@@ -24,4 +24,12 @@ class MatchService(
     suspend fun getMatch(matchId: String): Match {
         return matchReader.findOneById(matchId) ?: throw BaseException(ErrorCode.MATCH_NOT_FOUND)
     }
+
+    suspend fun getMatches(query: MatchQuery): List<Match> {
+        return matchReader.findAll(query)
+    }
+
+    suspend fun getMatchesByClubId(clubId: String, query: MatchQuery): List<Match> {
+        return matchReader.findAllByClubId(clubId, query)
+    }
 }

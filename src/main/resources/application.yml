@@ -2,7 +2,7 @@ spring:
   application:
     name: match
   webflux:
-    base-path: /match
+    base-path: /matches
   data:
     mongodb:
       host: mongo-match
