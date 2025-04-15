@@ -44,4 +44,14 @@ class MatchController(
             body = matchService.getMatchesByClubId(clubId, criteria.toQuery()).map { it.toResponse() }
         )
     }
+
+    @PostMapping("/{matchId}/join")
+    suspend fun joinMatch(
+        @PathVariable matchId: String,
+        @RequestBody request: JoinMatchRequest
+    ) {
+        matchService.join(request.toCommand())
+    }
+
+    // TODO 참가 취소
 }

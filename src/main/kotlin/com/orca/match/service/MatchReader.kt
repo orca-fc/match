@@ -35,7 +35,6 @@ class MatchReader(
             applyQueryOptions(options)
         }
 
-
         return reactiveMongoTemplate.find(
             query, Match::class.java
         ).collectList().awaitSingle()
@@ -51,9 +50,5 @@ class MatchReader(
             listOf(Sort.Order(Sort.Direction.DESC, "createdAt"))
         }
         with(Sort.by(sortOrders))
-    }
-
-    suspend fun getQueryById(id: String): Query {
-        return Query(Criteria.where("_id").`is`(id))
     }
 }

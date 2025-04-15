@@ -12,6 +12,7 @@ import org.springframework.web.server.ServerWebInputException
 class GlobalExceptionHandler {
 
     private val logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+    private val externalLogFormat = "-----Error occurred from {}-----\n ErrorCode: {}, HttpStatus: {}, Details: '{}'"
 
     @ExceptionHandler(Exception::class)
     fun undefinedException(e: Exception): ResponseEntity<ErrorResponse> {
@@ -35,5 +36,19 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BaseException::class)
     fun handleBaseException(e: BaseException): ResponseEntity<ErrorResponse> {
         return baseResponse(e.httpStatus, ErrorResponse(e))
+    }
+
+    @ExceptionHandler(ExternalServiceException::class)
+    fun handleExternalServiceException(e: ExternalServiceException): ResponseEntity<ErrorResponse> {
+        logger.error(
+            externalLogFormat,
+            e.serviceName,
+            e.errorCode.name,
+            e.httpStatus,
+            e.exceptionDetails,
+            e
+        )
+
+        return baseResponse(e.httpStatus, e.toErrorResponse())
     }
 }

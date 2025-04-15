@@ -1,7 +1,8 @@
 package com.orca.match.api
 
 import com.orca.match.domain.MatchStatus
-import com.orca.match.service.MatchCreateCommand
+import com.orca.match.service.CreateMatchCommand
+import com.orca.match.service.JoinMatchCommand
 import com.orca.match.service.MatchQuery
 import com.orca.match.util.convertMatchDateFormant
 import jakarta.validation.constraints.Pattern
@@ -16,8 +17,8 @@ data class MatchCreateRequest(
     val cost: Int,
     val content: String
 ) {
-    fun toCommand(): MatchCreateCommand {
-        return MatchCreateCommand(
+    fun toCommand(): CreateMatchCommand {
+        return CreateMatchCommand(
             clubId = this.clubId,
             scheduledAt = convertMatchDateFormant(date, time),
             venue = this.venue,
@@ -34,12 +35,13 @@ data class MatchResponse(
     val cost: Int,
     val content: String,
     val status: String,
-    val home: MatchResultResponse,
-    val away: MatchResultResponse?,
+    val records: List<String>,
     val createdAt: Instant,
 )
 
-data class MatchResultResponse(
+data class MatchRecordResponse(
+    val id: String,
+    val matchId: String,
     val clubId: String,
     val records: List<PlayerRecordResponse>,
     val resultType: String?,
@@ -70,4 +72,20 @@ data class MatchCriteria(
             }
         )
     }
+}
+
+data class JoinMatchRequest(
+    val matchId: String,
+    val clubId: String,
+    val playerId: String,
+    val playerName: String
+)
+
+fun JoinMatchRequest.toCommand(): JoinMatchCommand {
+    return JoinMatchCommand(
+        matchId = this.matchId,
+        clubId = this.clubId,
+        playerId = this.playerId,
+        playerName = this.playerName
+    )
 }
