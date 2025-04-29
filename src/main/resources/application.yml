@@ -26,17 +26,24 @@ spring:
     listener:
       ack-mode: manual_immediate
 
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /v3/api-docs
+
 server:
   port: 8040
 
 external:
   services:
-    auth:
+    auths:
       host: orca-auth
       port: 8010
-    player:
+    players:
       host: orca-player
       port: 8020
-    club:
+    clubs:
       host: orca-club
       port: 8030
