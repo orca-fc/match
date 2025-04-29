@@ -1,14 +1,15 @@
 package com.orca.match.domain
 
+import org.bson.types.ObjectId
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document(collection = "match_records")
 data class MatchRecord(
     @Id
-    val id: String? = null,
-    val matchId: String,
-    val clubId: String,
+    val id: ObjectId? = null,
+    val matchId: ObjectId,
+    val clubId: ObjectId,
     val teamType: TeamType = TeamType.HOME,
     val records: MutableList<PlayerRecord> = mutableListOf(),
     val resultType: ResultType? = null,
@@ -21,7 +22,7 @@ enum class TeamType {
 }
 
 data class PlayerRecord(
-    val id: String,
+    val id: ObjectId,
     val name: String,
     val goal: Int = 0,
     val assist: Int = 0

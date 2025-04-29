@@ -10,6 +10,9 @@ import com.orca.match.repository.MatchRecordRepository
 import com.orca.match.repository.MatchRepository
 import com.orca.match.util.buildQueryById
 import kotlinx.coroutines.reactor.awaitSingle
+import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.bson.Document
+import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Update
 import org.springframework.stereotype.Repository
@@ -31,7 +34,11 @@ class MatchManager(
         ).awaitSingle()
     }
 
-    suspend fun createMatchRecord(matchId: String, clubId: String, teamType: TeamType): MatchRecord {
+    suspend fun deleteMatch(matchId: ObjectId) {
+        matchRepository.deleteById(matchId).awaitSingleOrNull()
+    }
+
+    suspend fun createMatchRecord(matchId: ObjectId, clubId: ObjectId, teamType: TeamType): MatchRecord {
         return matchRecordRepository.save(
             MatchRecord(
                 matchId = matchId,
@@ -41,7 +48,11 @@ class MatchManager(
         ).awaitSingle()
     }
 
-    suspend fun addMatchRecord(matchId: String, matchRecordId: String): Match {
+    suspend fun deleteMatchRecord(matchRecordId: ObjectId) {
+        matchRecordRepository.deleteById(matchRecordId).awaitSingleOrNull()
+    }
+
+    suspend fun addMatchRecord(matchId: ObjectId, matchRecordId: ObjectId): Match {
         val update = Update().apply {
             push("records", matchRecordId)
         }
@@ -50,9 +61,9 @@ class MatchManager(
         ).awaitSingle()
     }
 
-    suspend fun joinMatch(matchRecordId: String, command: JoinMatchCommand): MatchRecord {
+    suspend fun joinMatch(matchRecordId: ObjectId, command: JoinMatchCommand): MatchRecord {
         val update = Update().apply {
-            addToSet("records", PlayerRecord(id = command.playerId, name = command.playerName))
+            addToSet("records", PlayerRecord(id = ObjectId(command.playerId), name = command.playerName))
         }
 
         val result = reactiveMongoTemplate.updateFirst(
@@ -67,6 +78,24 @@ class MatchManager(
             throw BaseException(ErrorCode.PARTICIPANT_DUPLICATED)
         } else {
             matchRecordRepository.findById(matchRecordId).awaitSingle()
+        }
+    }
+
+    suspend fun cancelMatch(matchRecordId: ObjectId, playerId: ObjectId) {
+        val update = Update().apply {
+            pull("records", Document("id", playerId))
+        }
+
+        val result = reactiveMongoTemplate.updateFirst(
+            buildQueryById(matchRecordId),
+            update,
+            MatchRecord::class.java
+        ).awaitSingle()
+
+        if (result.matchedCount == 0L) {
+            throw BaseException(ErrorCode.MATCH_RECORD_NOT_FOUND)
+        } else if (result.modifiedCount == 0L) {
+            throw BaseException(ErrorCode.PLAYER_NOT_IN_MATCH)
         }
     }
 }

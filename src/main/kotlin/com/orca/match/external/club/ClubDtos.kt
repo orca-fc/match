@@ -16,7 +16,7 @@ data class ClubResponse(
 data class PlayerResponse(
     val id: String,
     val name: String,
-    val position: String,
+    val position: String?,
     val matchCount: Int,
     val goal: Int,
     val assist: Int,

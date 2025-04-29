@@ -16,3 +16,9 @@ data class JoinMatchCommand(
     val playerId: String,
     val playerName: String
 )
+
+data class CancelMatchCommand(
+    val matchId: String,
+    val clubId: String,
+    val playerId: String
+)

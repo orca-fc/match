@@ -2,6 +2,7 @@ package com.orca.match.util
 
 import com.orca.match.exception.BaseException
 import com.orca.match.exception.ErrorCode
+import org.bson.types.ObjectId
 import org.springframework.data.mongodb.core.query.Criteria
 import org.springframework.data.mongodb.core.query.Query
 import org.springframework.http.HttpStatus
@@ -37,6 +38,6 @@ fun <T> baseResponse(status: HttpStatusCode = HttpStatus.OK, body: T): ResponseE
     return ResponseEntity.status(status).body(body)
 }
 
-fun buildQueryById(id: String): Query {
+fun buildQueryById(id: ObjectId): Query {
     return Query(Criteria.where("_id").`is`(id))
 }

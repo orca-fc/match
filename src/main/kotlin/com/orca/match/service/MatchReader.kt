@@ -4,6 +4,7 @@ import com.orca.match.domain.Match
 import com.orca.match.repository.MatchRepository
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.bson.types.ObjectId
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.core.ReactiveMongoTemplate
 import org.springframework.data.mongodb.core.query.Criteria
@@ -15,7 +16,7 @@ class MatchReader(
     private val matchRepository: MatchRepository,
     private val reactiveMongoTemplate: ReactiveMongoTemplate
 ) {
-    suspend fun findOneById(matchId: String): Match? {
+    suspend fun findOneById(matchId: ObjectId): Match? {
         return matchRepository.findById(matchId).awaitSingleOrNull()
     }
 
@@ -26,7 +27,7 @@ class MatchReader(
         ).collectList().awaitSingle()
     }
 
-    suspend fun findAllByClubId(clubId: String, options: MatchQuery): List<Match> {
+    suspend fun findAllByClubId(clubId: ObjectId, options: MatchQuery): List<Match> {
         val homeCriteria = Criteria.where("home.clubId").`is`(clubId)
         val awayCriteria = Criteria.where("away.clubId").`is`(clubId)
 
