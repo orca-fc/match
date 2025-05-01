@@ -1,4 +1,4 @@
-package com.orca.match.service
+package com.orca.match.service.record
 
 import com.orca.match.domain.MatchRecord
 import com.orca.match.domain.TeamType
@@ -16,6 +16,10 @@ class MatchRecordReader(
     private val matchRecordRepository: MatchRecordRepository,
     private val reactiveMongoTemplate: ReactiveMongoTemplate
 ) {
+    suspend fun findOneById(matchRecordId: ObjectId): MatchRecord? {
+        return matchRecordRepository.findById(matchRecordId).awaitSingleOrNull()
+    }
+
     suspend fun findOneByMatchIdAndClubId(matchId: ObjectId, clubId: ObjectId): MatchRecord? {
         return matchRecordRepository.findByMatchIdAndClubId(matchId, clubId).awaitSingleOrNull()
     }

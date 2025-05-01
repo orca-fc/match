@@ -1,5 +1,6 @@
 package com.orca.match.domain
 
+import com.orca.match.api.MatchApplicationResponse
 import com.orca.match.api.MatchResponse
 import com.orca.match.api.MatchRecordResponse
 import com.orca.match.api.PlayerRecordResponse
@@ -14,7 +15,8 @@ fun Match.toResponse(): MatchResponse {
         content = this.content,
         status = this.status.value,
         records = this.records.map { it.toString() },
-        createdAt = this.createdAt,
+        createdAt = this.createdAt!!,
+        updatedAt = this.updatedAt!!
     )
 }
 
@@ -36,5 +38,17 @@ fun PlayerRecord.toResponse(): PlayerRecordResponse {
         name = this.name,
         goal = this.goal,
         assist = this.assist,
+    )
+}
+
+fun MatchApplication.toResponse(): MatchApplicationResponse {
+    return MatchApplicationResponse(
+        id = this.id.toString(),
+        matchId = this.matchId.toString(),
+        clubId = this.clubId.toString(),
+        status = this.status.name,
+        statusMessage = this.status.value,
+        createdAt = this.createdAt?.toKstString(),
+        updatedAt = this.updatedAt?.toKstString()
     )
 }

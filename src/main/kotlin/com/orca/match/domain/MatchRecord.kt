@@ -14,7 +14,7 @@ data class MatchRecord(
     val records: MutableList<PlayerRecord> = mutableListOf(),
     val resultType: ResultType? = null,
     val mannerPoint: Double = 0.0
-)
+): Auditable()
 
 enum class TeamType {
     HOME,

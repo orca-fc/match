@@ -11,6 +11,9 @@ spring:
       password: orca0000
       database: admin
       authentication-database: admin
+    redis:
+      repositories:
+        enabled: false
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -35,6 +38,9 @@ springdoc:
 
 server:
   port: 8040
+
+redis:
+  host: orca-redis
 
 external:
   services:

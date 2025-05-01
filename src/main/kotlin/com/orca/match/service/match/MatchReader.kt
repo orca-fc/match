@@ -1,7 +1,8 @@
-package com.orca.match.service
+package com.orca.match.service.match
 
 import com.orca.match.domain.Match
 import com.orca.match.repository.MatchRepository
+import com.orca.match.service.MatchQuery
 import kotlinx.coroutines.reactor.awaitSingle
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.bson.types.ObjectId
