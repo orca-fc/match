@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping
 @RestController
 class MatchController(
-    private val matchService: MatchService
+    private val matchService: MatchService,
 ) {
     @Operation(
         summary = "매칭 등록",
@@ -76,7 +76,7 @@ class MatchController(
         @RequestBody request: JoinMatchRequest
     ): ResponseEntity<MatchRecordResponse> {
         return baseResponse(
-            body = matchService.join(request.toCommand(matchId)).toResponse()
+            body = matchService.joinMatch(request.toCommand(matchId)).toResponse()
         )
     }
 
@@ -85,11 +85,11 @@ class MatchController(
         description = "참가중인 매치 취소"
     )
     @DeleteMapping("/{matchId}/cancel")
-    suspend fun cancelMatch(
+    suspend fun withdrawFromMatch(
         @PathVariable matchId: String,
         @RequestBody request: CancelMatchRequest
     ): ResponseEntity<Void> {
-        matchService.cancel(request.toCommand(matchId))
+        matchService.withdrawFromMatch(request.toCommand(matchId))
         return ResponseEntity.noContent().build()
     }
 

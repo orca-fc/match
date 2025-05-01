@@ -22,3 +22,8 @@ data class CancelMatchCommand(
     val clubId: String,
     val playerId: String
 )
+
+data class ApplyMatchCommand(
+    val matchId: String,
+    val clubId: String
+)

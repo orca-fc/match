@@ -1,5 +1,8 @@
 package com.orca.match.util
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.orca.match.exception.BaseException
 import com.orca.match.exception.ErrorCode
 import org.bson.types.ObjectId
@@ -12,6 +15,7 @@ import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 fun convertMatchDateFormant(date: String, time: String): Instant {
     val dateTimeString = "$date $time"
@@ -40,4 +44,18 @@ fun <T> baseResponse(status: HttpStatusCode = HttpStatus.OK, body: T): ResponseE
 
 fun buildQueryById(id: ObjectId): Query {
     return Query(Criteria.where("_id").`is`(id))
+}
+
+fun generateTransactionId(): String {
+    return "txId:${UUID.randomUUID()}"
+}
+
+fun Any.toJsonString(): String {
+    return ObjectMapper().writeValueAsString(this)
+}
+
+fun String.getJsonValue(key: String): String? {
+    val mapper = jacksonObjectMapper()
+    val node: JsonNode = mapper.readTree(this)
+    return node[key]?.asText()
 }

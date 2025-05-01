@@ -1,10 +1,7 @@
 package com.orca.match.api
 
 import com.orca.match.domain.MatchStatus
-import com.orca.match.service.CancelMatchCommand
-import com.orca.match.service.CreateMatchCommand
-import com.orca.match.service.JoinMatchCommand
-import com.orca.match.service.MatchQuery
+import com.orca.match.service.*
 import com.orca.match.util.convertMatchDateFormant
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.Pattern
@@ -15,14 +12,19 @@ import java.time.Instant
 data class MatchCreateRequest(
     @field:Schema(description = "Club ID")
     val clubId: String,
+
     @field:Schema(description = "경기 날짜", example = "yyyy-MM-dd")
     val date: String,
+
     @field:Schema(description = "경기 시간", example = "HH:mm")
     val time: String,
+
     @field:Schema(description = "경기 장소")
     val venue: String,
+
     @field:Schema(description = "구장 대여료")
     val cost: Int,
+
     @field:Schema(description = "내용")
     val content: String
 ) {
@@ -41,36 +43,52 @@ data class MatchCreateRequest(
 data class MatchResponse(
     @field:Schema(description = "Match ID")
     val id: String,
+
     @field:Schema(description = "경기 날짜")
     val scheduledAt: String,
+
     @field:Schema(description = "경기 장소")
     val venue: String,
+
     @field:Schema(description = "구장 대여료")
     val cost: Int,
+
     @field:Schema(description = "내용")
     val content: String,
+
     @field:Schema(description = "매칭 상태 (PENDING / MATCHED / COMPLETED)")
     val status: String,
+
     @field:Schema(description = "MatchRecord ID 목록 (HOME / AWAY)")
     val records: List<String>,
-    @field:Schema(description = "매칭 생성 날짜")
+
+    @field:Schema(description = "생성 날짜")
     val createdAt: Instant,
+
+    @field:Schema(description = "수정 날짜")
+    val updatedAt: Instant
 )
 
 @Schema(description = "MatchRerord Response DTO")
 data class MatchRecordResponse(
     @field:Schema(description = "MatchRecord ID")
     val id: String,
+
     @field:Schema(description = "Match ID")
     val matchId: String,
+
     @field:Schema(description = "Club ID")
     val clubId: String,
+
     @field:Schema(description = "Team Type (HOME / AWAY)")
     val teamType: String,
+
     @field:Schema(description = "선수 기록")
     val records: List<PlayerRecordResponse>,
+
     @field:Schema(description = "경기 결과")
     val resultType: String?,
+
     @field:Schema(description = "매너 점수")
     val mannerPoint: Double,
 )
@@ -79,10 +97,13 @@ data class MatchRecordResponse(
 data class PlayerRecordResponse(
     @field:Schema(description = "Player ID")
     val id: String,
+
     @field:Schema(description = "Player 이름")
     val name: String,
+
     @field:Schema(description = "득점")
     val goal: Int,
+
     @field:Schema(description = "도움")
     val assist: Int,
 )
@@ -91,6 +112,7 @@ data class PlayerRecordResponse(
 data class MatchCriteria(
     @field:Schema(description = "매치 상태", example = "PENDING / MATCHED / COMPLETED")
     val status: MatchStatus?,
+
     @field:Schema(description = "정렬 기준 (created / scheduledAt)", example = "created asc")
     val sortDirection: List<
             @Pattern(
@@ -113,8 +135,10 @@ data class MatchCriteria(
 data class JoinMatchRequest(
     @field:Schema(description = "Club ID")
     val clubId: String,
+
     @field:Schema(description = "Player ID")
     val playerId: String,
+
     @field:Schema(description = "Player 이름")
     val playerName: String
 )
@@ -132,6 +156,7 @@ fun JoinMatchRequest.toCommand(matchId: String): JoinMatchCommand {
 data class CancelMatchRequest(
     @field:Schema(description = "Club ID")
     val clubId: String,
+
     @field:Schema(description = "Player ID")
     val playerId: String
 ) {
@@ -143,3 +168,40 @@ data class CancelMatchRequest(
         )
     }
 }
+
+@Schema(description = "매칭 신청 RequestDTO")
+data class ApplyMatchRequest(
+    @field:Schema(description = "Club ID")
+    val clubId: String
+) {
+    fun toCommand(matchId: String): ApplyMatchCommand {
+        return ApplyMatchCommand(
+            matchId = matchId,
+            clubId = this.clubId
+        )
+    }
+}
+
+@Schema(description = "MatchApplication ResponseDTO")
+data class MatchApplicationResponse(
+    @field:Schema(description = "MatchApplication ID")
+    val id: String,
+
+    @field:Schema(description = "Match ID")
+    val matchId: String,
+
+    @field:Schema(description = "Club ID")
+    val clubId: String,
+
+    @field:Schema(description = "매칭 신청 상태 (PENDING / ACCEPTED / REJECTED)")
+    val status: String,
+
+    @field:Schema(description = "매칭 신청 상태 메시지")
+    val statusMessage: String,
+
+    @field:Schema(description = "생성 날짜")
+    val createdAt: String?,
+
+    @field:Schema(description = "수정 날짜")
+    val updatedAt: String?
+)

@@ -15,8 +15,7 @@ data class Match(
     val content: String,
     val status: MatchStatus = MatchStatus.PENDING,
     val records: List<ObjectId> = mutableListOf(),
-    val createdAt: Instant = Instant.now()
-)
+): Auditable()
 
 enum class MatchStatus(val value: String) {
     PENDING("매칭 대기"),
