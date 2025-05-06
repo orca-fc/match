@@ -1,9 +1,11 @@
 package com.orca.match.service
 
+import com.orca.match.domain.ResultType
+import org.bson.types.ObjectId
 import java.time.Instant
 
 data class CreateMatchCommand(
-    val clubId: String,
+    val clubId: ObjectId,
     val scheduledAt: Instant,
     val venue: String,
     val cost: Int,
@@ -11,19 +13,32 @@ data class CreateMatchCommand(
 )
 
 data class JoinMatchCommand(
-    val matchId: String,
-    val clubId: String,
-    val playerId: String,
+    val matchId: ObjectId,
+    val clubId: ObjectId,
+    val playerId: ObjectId,
     val playerName: String
 )
 
 data class CancelMatchCommand(
-    val matchId: String,
-    val clubId: String,
-    val playerId: String
+    val matchId: ObjectId,
+    val clubId: ObjectId,
+    val playerId: ObjectId
 )
 
 data class ApplyMatchCommand(
-    val matchId: String,
-    val clubId: String
+    val matchId: ObjectId,
+    val clubId: ObjectId
+)
+
+data class RegisterMatchRecordsCommand(
+    val matchRecordId: ObjectId,
+    val resultType: ResultType,
+    val opponentMannerScore: Int,
+    val playerRecords: List<PlayerRecordCommand>
+)
+
+data class PlayerRecordCommand(
+    val id: ObjectId,
+    val goal: Int,
+    val assist: Int
 )

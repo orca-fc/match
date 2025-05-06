@@ -15,6 +15,7 @@ enum class ErrorCode(val httpStatus: HttpStatusCode = HttpStatus.NOT_FOUND, val 
     PARTICIPANT_DUPLICATED(httpStatus = HttpStatus.CONFLICT, message = "Already joined player"),
     PLAYER_NOT_IN_MATCH(httpStatus = HttpStatus.BAD_REQUEST, message = "Not a participant in this match."),
     MATCH_CREATE_FAILED(httpStatus = HttpStatus.INTERNAL_SERVER_ERROR, "Match create failed."),
+    INVALID_MATCH_RESULTS(httpStatus = HttpStatus.CONFLICT, "Invalid match results."),
 
     // MATCH_APPLICATION
     MATCH_APPLICATION_NOT_FOUND(message = "MatchApplication not found"),
