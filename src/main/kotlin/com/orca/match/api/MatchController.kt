@@ -103,7 +103,21 @@ class MatchController(
         @RequestParam teamType: TeamType? = null
     ): ResponseEntity<List<MatchRecordResponse>> {
         return baseResponse(
-            body = matchService.getMatchRecords(ObjectId(matchId), teamType).map { it.toResponse() }
+            body = matchService.getMatchRecordByMatchId(ObjectId(matchId), teamType).map { it.toResponse() }
+        )
+    }
+
+    @Operation(
+        summary = "매칭 결과 등록",
+        description = "매칭 결과 및 선수 개인 기록을 등록"
+    )
+    @PutMapping("/records/{matchRecordId}")
+    suspend fun registerMatchRecords(
+        @PathVariable matchRecordId: String,
+        @Valid @RequestBody request: RegisterMatchRecordRequest
+    ): ResponseEntity<MatchRecordResponse> {
+        return baseResponse(
+            body = matchService.registerMatchRecords(request.toCommand(matchRecordId)).toResponse()
         )
     }
 }

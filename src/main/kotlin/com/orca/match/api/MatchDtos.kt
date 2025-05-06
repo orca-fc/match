@@ -1,10 +1,14 @@
 package com.orca.match.api
 
 import com.orca.match.domain.MatchStatus
+import com.orca.match.domain.ResultType
 import com.orca.match.service.*
 import com.orca.match.util.convertMatchDateFormant
 import io.swagger.v3.oas.annotations.media.Schema
+import jakarta.validation.constraints.Max
+import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.Pattern
+import org.bson.types.ObjectId
 import org.springframework.data.domain.Sort
 import java.time.Instant
 
@@ -30,7 +34,7 @@ data class MatchCreateRequest(
 ) {
     fun toCommand(): CreateMatchCommand {
         return CreateMatchCommand(
-            clubId = this.clubId,
+            clubId = ObjectId(this.clubId),
             scheduledAt = convertMatchDateFormant(date, time),
             venue = this.venue,
             cost = this.cost,
@@ -89,8 +93,8 @@ data class MatchRecordResponse(
     @field:Schema(description = "경기 결과")
     val resultType: String?,
 
-    @field:Schema(description = "매너 점수")
-    val mannerPoint: Double,
+    @field:Schema(description = "상대 팀 매너 점수 평가")
+    val opponentMannerScore: Int,
 )
 
 @Schema(description = "PlayerRecord ResponseDTO")
@@ -145,9 +149,9 @@ data class JoinMatchRequest(
 
 fun JoinMatchRequest.toCommand(matchId: String): JoinMatchCommand {
     return JoinMatchCommand(
-        matchId = matchId,
-        clubId = this.clubId,
-        playerId = this.playerId,
+        matchId = ObjectId(matchId),
+        clubId = ObjectId(this.clubId),
+        playerId = ObjectId(this.playerId),
         playerName = this.playerName
     )
 }
@@ -162,9 +166,9 @@ data class CancelMatchRequest(
 ) {
     fun toCommand(matchId: String): CancelMatchCommand {
         return CancelMatchCommand(
-            matchId = matchId,
-            clubId = this.clubId,
-            playerId = this.playerId,
+            matchId = ObjectId(matchId),
+            clubId = ObjectId(this.clubId),
+            playerId = ObjectId(this.playerId),
         )
     }
 }
@@ -176,8 +180,8 @@ data class ApplyMatchRequest(
 ) {
     fun toCommand(matchId: String): ApplyMatchCommand {
         return ApplyMatchCommand(
-            matchId = matchId,
-            clubId = this.clubId
+            matchId = ObjectId(matchId),
+            clubId = ObjectId(this.clubId)
         )
     }
 }
@@ -205,3 +209,46 @@ data class MatchApplicationResponse(
     @field:Schema(description = "수정 날짜")
     val updatedAt: String?
 )
+
+@Schema(description = "매치 결과 등록 RequestDTO")
+data class RegisterMatchRecordRequest(
+    @field:Schema(description = "매치 결과 (WIN / LOSE / DRAW)")
+    val resultType: ResultType,
+
+    @field:Min(1)
+    @field:Max(10)
+    @field:Schema(description = "상대 팀 매너 점수 평가 (1 ~ 10)")
+    val opponentMannerScore: Int,
+
+    @field:Schema(description = "선수 기록 리스트")
+    val playerRecords: List<PlayerRecordRequest>
+) {
+    @Schema(description = "선수 기록 RequestDTO")
+    data class PlayerRecordRequest(
+        @field:Schema(description = "Player ID")
+        val id: String,
+
+        @field:Schema(description = "득점")
+        val goal: Int,
+
+        @field:Schema(description = "도움")
+        val assist: Int
+    ) {
+        fun toCommand(): PlayerRecordCommand {
+            return PlayerRecordCommand(
+                id = ObjectId(this.id),
+                goal = this.goal,
+                assist = this.assist
+            )
+        }
+    }
+
+    fun toCommand(matchRecordId: String): RegisterMatchRecordsCommand {
+        return RegisterMatchRecordsCommand(
+            matchRecordId = ObjectId(matchRecordId),
+            resultType = this.resultType,
+            opponentMannerScore = this.opponentMannerScore,
+            playerRecords = this.playerRecords.map { it.toCommand() },
+        )
+    }
+}

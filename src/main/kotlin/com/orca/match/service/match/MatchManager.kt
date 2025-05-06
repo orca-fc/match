@@ -63,7 +63,7 @@ class MatchManager(
 
     suspend fun joinMatch(matchRecordId: ObjectId, command: JoinMatchCommand): MatchRecord {
         val update = Update().apply {
-            addToSet("records", PlayerRecord(id = ObjectId(command.playerId), name = command.playerName))
+            addToSet("records", PlayerRecord(id = command.playerId, name = command.playerName))
         }
 
         val result = reactiveMongoTemplate.updateFirst(

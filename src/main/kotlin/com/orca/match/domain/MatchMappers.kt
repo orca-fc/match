@@ -28,7 +28,7 @@ fun MatchRecord.toResponse(): MatchRecordResponse {
         teamType = this.teamType.name,
         records = this.records.map { it.toResponse() },
         resultType = if (this.resultType == null) null else this.resultType.value,
-        mannerPoint = this.mannerPoint,
+        opponentMannerScore = this.opponentMannerScore,
     )
 }
 
