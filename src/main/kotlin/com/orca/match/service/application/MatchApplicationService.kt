@@ -20,8 +20,8 @@ class MatchApplicationService(
     private val matchService: MatchService
 ) {
     suspend fun apply(command: ApplyMatchCommand): MatchApplication {
-        validateDuplicatedMatchApplication(ObjectId(command.matchId), ObjectId(command.clubId))
-        return matchApplicationManager.create(ObjectId(command.matchId), ObjectId(command.clubId))
+        validateDuplicatedMatchApplication(command.matchId, command.clubId)
+        return matchApplicationManager.create(command.matchId, command.clubId)
             ?: throw BaseException(ErrorCode.MATCH_APPLICATION_CREATE_FAILED)
     }
 
